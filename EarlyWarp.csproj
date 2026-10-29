@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(MSBuildProjectDirectory)\DefaultPath.props" Condition="Exists('$(MSBuildProjectDirectory)\DefaultPath.props')" />
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <LangVersion>7.3</LangVersion>
+    <AssemblyName>EarlyWarp</AssemblyName>
+    <RootNamespace>EarlyWarp</RootNamespace>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Deterministic>true</Deterministic>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+
+    <ReleasePath Condition="'$(ReleasePath)' == ''">$(MSBuildProjectDirectory)\release\</ReleasePath>
+    <DebugModDir Condition="'$(DebugModDir)' == ''">EarlyWarp</DebugModDir>
+    <InstallToProfile Condition="'$(InstallToProfile)' == ''">false</InstallToProfile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="BepInEx">
+      <HintPath>$(BepinExPath)core\BepInEx.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>$(BepinExPath)core\0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(DSPAssemblyPath)Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(DSPAssemblyPath)UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(DSPAssemblyPath)UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="CopyReleaseOutput" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+    <MakeDir Directories="$(ReleasePath)plugins" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ReleasePath)plugins" />
+  </Target>
+
+  <Target Name="InstallMod" AfterTargets="Build" Condition="'$(Configuration)' == 'Release' and '$(InstallToProfile)' == 'true'">
+    <MakeDir Directories="$(BepinExPath)plugins\$(DebugModDir)" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(BepinExPath)plugins\$(DebugModDir)" />
+  </Target>
+</Project>
